@@ -1,0 +1,50 @@
+---
+- name: Create a new policy in Red Hat Advanced Cluster Security for Kubernetes
+  hosts: localhost
+  gather_facts: true
+  collections:
+    - lvrfrc87.git_acp
+
+  vars_files:
+  - vault.yml
+
+  vars:
+    acs_host: "{{ vaulted_acs_host }}"
+    acs_token: "{{ vaulted_acs_token }}"
+    git_user: "{{ vaulted_git_user }}"
+    git_pat: "{{ vaulted_git_pat }}"
+    git_url: "{{ vaulted_git_url }}"
+    branch: main
+
+
+  tasks:
+  - name: Initial fetch
+    include_tasks:
+      file: tasks/fetch_policies.yml
+    vars:
+      dest_path: files/policies_desired
+
+  - name: Clear policies_actual
+    ansible.builtin.file:
+      path: files/policies_actual
+      state: absent
+    changed_when: false
+
+  - name: Get policies
+    include_tasks:
+      file: tasks/get_policies.yml
+
+  - name: Process policies
+    include_tasks:
+      file: tasks/process_policies.yml
+    register: process_policies
+
+  - debug: var=process_policies
+
+  handlers:
+  - name: Push to git
+    include_tasks:
+      file: tasks/push_policies.yml
+    vars:
+      branch: "{{ ansible_date_time.iso8601_micro | to_uuid }}"
+      comment: "Detected new policies"

@@ -1,0 +1,18 @@
+- name: delete actual policy if IDs don't match {{ desired_policy_body.name }}
+  include_tasks: policy_delete.yml
+  vars:
+    policy_body: "{{ actual_policy_body }}"
+  when: actual_policy_body.id != desired_policy_body.id
+
+- name: update policy if bodies dont match {{ desired_policy_body.name }}
+  include_tasks: policy_update.yml
+  vars:
+    policy_body: "{{ desired_policy_body }}"
+  when: actual_policy_body.id == desired_policy_body.id and actual_policy_body != desired_policy_body
+
+
+- name: create policy if bodies AND ids don't match {{ desired_policy_body.name }}
+  include_tasks: policy_create.yml
+  vars:
+    policy_body: "{{ desired_policy_body }}"
+  when: actual_policy_body.id != desired_policy_body.id and actual_policy_body != desired_policy_body

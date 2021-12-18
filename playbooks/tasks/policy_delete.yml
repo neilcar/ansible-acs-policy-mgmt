@@ -1,0 +1,14 @@
+  - name: delete policy 
+    uri:
+      url: https://{{ acs_host }}/v1/policies/{{ policy_body.id }}
+      headers:
+        Authorization: "Bearer {{ acs_token }}"
+      method: DELETE
+      force_basic_auth: yes
+      status_code: 200
+      body_format: json
+      validate_certs: false
+    register: answer
+    no_log: false
+    changed_when: true
+    notify: "Push to git"

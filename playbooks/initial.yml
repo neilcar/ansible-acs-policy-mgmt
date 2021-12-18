@@ -1,0 +1,33 @@
+---
+- name: Create a new policy in Red Hat Advanced Cluster Security for Kubernetes
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - lvrfrc87.git_acp
+
+  vars_files:
+  - vault.yml
+
+  vars:
+    acs_host: "{{ vaulted_acs_host }}"
+    acs_token: "{{ vaulted_acs_token }}"
+    git_user: "{{ vaulted_git_user }}"
+    git_pat: "{{ vaulted_git_pat }}"
+    git_url: "{{ vaulted_git_url }}"
+    branch: main
+    comment: "Initial checkin of policies"
+
+  tasks:
+  - name: Initial fetch
+    include_tasks:
+      file: tasks/fetch_policies.yml
+    vars:
+      dest_path: files/policies_actual
+
+  - name: Get policies
+    include_tasks:
+      file: tasks/get_policies.yml
+
+  - name: Push to git
+    include_tasks:
+      file: tasks/push_policies.yml

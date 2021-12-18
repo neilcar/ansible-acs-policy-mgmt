@@ -1,0 +1,14 @@
+- set_fact:
+    url_parse: "{{ git_url | parse_url }}"
+
+- name: Clear destination path
+  ansible.builtin.file:
+    path: "{{ dest_path }}"
+    state: absent
+  changed_when: false
+
+- name: Get policies from git
+  git: 
+    repo: "{{ url_parse.scheme }}://{{ git_user | urlencode }}:{{ git_pat | urlencode }}@{{ url_parse.netloc }}{{ url_parse.path }}"
+    dest: "{{ dest_path }}"
+  changed_when: false

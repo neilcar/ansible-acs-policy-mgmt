@@ -1,0 +1,41 @@
+- name: get actual
+  find:
+    paths: files/policies_actual
+    file_type: file
+    patterns: "*.json"
+  register: policies_actual
+
+- name: get desired
+  find:
+    paths: files/policies_desired
+    file_type: file
+    patterns: "*.json"
+  register: policies_desired
+
+- set_fact:
+    actual_files: "{{ policies_actual.files | map(attribute='path') | map('basename') | list | unique | sort }}"
+    desired_files: "{{ policies_desired.files | map(attribute='path') | map('basename') | list | unique | sort  }}"
+
+- name: Delete policies
+  include_tasks: policy_delete.yml
+  vars:
+    policy_body: "{{ lookup('file', 'files/policies_actual/{{ item }}') | from_json }}"
+    changed: true
+  with_items: "{{ actual_files | difference(desired_files) }}"
+
+- name: Create policies
+  include_tasks: policy_create.yml
+  vars:
+    policy_body: "{{ lookup('file', 'files/policies_desired/{{ item }}') | from_json }}"
+    changed: true
+  with_items: "{{ desired_files | difference(actual_files) }}"
+
+- name: Update existing policies
+  include_tasks: policy_process.yml
+  vars:
+    desired_policy_body: "{{ lookup('file', 'files/policies_desired/{{ item }}') | from_json }}"
+    actual_policy_body: "{{ lookup('file', 'files/policies_actual/{{ item }}') | from_json }}"
+    changed: true
+  with_items: "{{ desired_files | intersect(actual_files) }}"
+  when: (desired_policy_body | dict2items | rejectattr("key", "eq", "id") | list | items2dict ) != (actual_policy_body | dict2items | rejectattr("key", "eq", "id") | list | items2dict )
+

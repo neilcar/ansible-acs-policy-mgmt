@@ -1,0 +1,22 @@
+- name: copy git config
+  synchronize:
+    src: files/policies_desired/.git
+    dest: files/policies_actual/
+
+- name: create branch
+  shell: 
+    cmd: "git checkout -b {{ branch }}"
+    chdir: "files/policies_actual"
+
+
+- name: Push policies to branch
+  git_acp:
+    user: "{{ git_user }}"
+    token: "{{ git_pat }}"
+    path: "files/policies_actual"
+    branch: "{{ branch }}"
+    comment: "{{ comment }}"
+    remote: origin
+    add: [ "." ]
+    mode: https
+    url: "{{ git_url }}"

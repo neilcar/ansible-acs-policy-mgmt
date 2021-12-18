@@ -1,0 +1,16 @@
+
+- name: create new policy
+  uri:
+    url: https://{{ acs_host }}/v1/policies?enableStrictValidation=true
+    headers:
+      Authorization: "Bearer {{ acs_token }}"
+    method: POST
+    body: '{{ policy_body | dict2items | rejectattr("key", "eq", "id") | list | items2dict }}'
+    force_basic_auth: yes
+    status_code: 200
+    body_format: json
+    validate_certs: false
+  register: answer
+  no_log: false
+  changed_when: true
+  notify: "Push to git"
