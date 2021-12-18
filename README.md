@@ -24,6 +24,8 @@ Create a new git repo and initialize it with a README.md.  Create a Personal Acc
 
 Create an ACS API token.  The ACS API token can either have the Admin role or, if you prefer, a custom role with read/write permission to the /policies API endpoint.  More info can be found [here](https://docs.openshift.com/acs/3.67/cli/getting-started-cli.html#cli-authentication_cli-getting-started).
 
+Install Ansible Galaxy requirements with `ansible-galaxy install -r requirements.yml`.
+
 ## Ansible
 
 Create your Ansible Vault with those variables:
