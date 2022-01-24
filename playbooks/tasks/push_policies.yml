@@ -7,7 +7,7 @@
   synchronize:
     src: files/policies_desired/.git
     dest: files/policies_actual/
-  when: policies_actual_git is not defined
+  when: policies_actual_git.stat.exists is false
 
 - name: create branch
   shell:
