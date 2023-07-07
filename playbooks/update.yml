@@ -6,7 +6,7 @@
     - lvrfrc87.git_acp
 
   vars_files:
-  - vault.yml
+    - vault.yml
 
   vars:
     acs_host: "{{ vaulted_acs_host }}"
@@ -18,33 +18,35 @@
 
 
   tasks:
-  - name: Initial fetch
-    include_tasks:
-      file: tasks/fetch_policies.yml
-    vars:
-      dest_path: files/policies_desired
+    - name: Initial fetch
+      ansible.builtin.include_tasks:
+        file: tasks/fetch_policies.yml
+      vars:
+        dest_path: files/policies_desired
 
-  - name: Clear policies_actual
-    ansible.builtin.file:
-      path: files/policies_actual
-      state: absent
-    changed_when: false
+    - name: Clear policies_actual
+      ansible.builtin.file:
+        path: files/policies_actual
+        state: absent
+      changed_when: false
 
-  - name: Get policies
-    include_tasks:
-      file: tasks/get_policies.yml
+    - name: Get policies
+      ansible.builtin.include_tasks:
+        file: tasks/get_policies.yml
 
-  - name: Process policies
-    include_tasks:
-      file: tasks/process_policies.yml
-    register: process_policies
+    - name: Process policies
+      ansible.builtin.include_tasks:
+        file: tasks/process_policies.yml
+      register: process_policies
 
-  - debug: var=process_policies
+    - name: Debug process policies
+      ansible.builtin.debug:
+        var: process_policies
 
   handlers:
-  - name: Push to git
-    include_tasks:
-      file: tasks/push_policies.yml
-    vars:
-      branch: "{{ ansible_date_time.iso8601_micro | to_uuid }}"
-      comment: "Detected new policies"
+    - name: Push to git
+      ansible.builtin.include_tasks:
+        file: tasks/push_policies.yml
+      vars:
+        branch: "{{ ansible_date_time.iso8601_micro | to_uuid }}"
+        comment: "Detected new policies"

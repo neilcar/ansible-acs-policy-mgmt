@@ -1,22 +1,21 @@
-- name: check policies_actual/.git
-  stat:
+- name: Check policies_actual/.git
+  ansible.builtin.stat:
     path: files/policies_actual/.git
   register: policies_actual_git
 
-- name: copy git config
-  synchronize:
+- name: Copy git config
+  ansible.posix.synchronize:
     src: files/policies_desired/.git
     dest: files/policies_actual/
   when: policies_actual_git.stat.exists is false
 
-- name: create branch
-  shell:
+- name: Create branch
+  ansible.builtin.shell:
     cmd: "git checkout {{ branch }} 2>/dev/null || git checkout -b {{ branch }}"
     chdir: "files/policies_actual"
 
-
 - name: Push policies to branch
-  git_acp:
+  lvrfrc87.git_acp:
     user: "{{ git_user }}"
     token: "{{ git_pat }}"
     path: "files/policies_actual"
