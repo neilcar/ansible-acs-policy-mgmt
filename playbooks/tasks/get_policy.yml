@@ -1,5 +1,5 @@
-- name: get policy
-  uri:
+- name: Get policy
+  ansible.builtin.uri:
     url: https://{{ acs_host }}/v1/policies/{{ policy.id }}
     headers:
       Authorization: "Bearer {{ acs_token }}"
@@ -9,8 +9,8 @@
   register: policy_body
   no_log: true
 
-- name: write policy {{ policy_body.json.name }}
-  copy:
+- name: Write policy {{ policy_body.json.name }}
+  ansible.builtin.copy:
     # filter lastUpdated out of the policy body
     content: '{{ policy_body.json | dict2items | rejectattr("key", "eq", "lastUpdated") | list | items2dict }}'
     dest: 'files/policies_actual/{{ policy_body.json.name | replace("/", " ") | replace(":", " ") }}.json'

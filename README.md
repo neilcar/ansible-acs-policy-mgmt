@@ -31,11 +31,11 @@ Install Ansible Galaxy requirements with `ansible-galaxy install -r requirements
 Create your Ansible Vault with those variables:
 
 ```yaml
-vaulted_acs_host: <your-acs-host>
+vaulted_acs_host: <your-acs-host> i.e. central-rhacs-operator.apps.ocp4.example.com
 vaulted_acs_token: <your-acs-API-token>
 vaulted_git_user: <git user with read/write access>
 vaulted_git_pat: <git PAT>
-vaulted_git_url: <http URL to the git repo>
+vaulted_git_repo: <name of the repository> i.e. acs-gitops-policies.git
 ```
 
 Run the `initial.yml` playbook to create the desired policy collection

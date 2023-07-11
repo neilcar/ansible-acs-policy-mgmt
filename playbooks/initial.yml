@@ -6,28 +6,29 @@
     - lvrfrc87.git_acp
 
   vars_files:
-  - vault.yml
+    - vault.yml
 
   vars:
     acs_host: "{{ vaulted_acs_host }}"
     acs_token: "{{ vaulted_acs_token }}"
     git_user: "{{ vaulted_git_user }}"
     git_pat: "{{ vaulted_git_pat }}"
-    git_url: "{{ vaulted_git_url }}"
+    git_repo: "{{ vaulted_git_repo }}"
+    git_url: "https://{{ git_pat }}@github.com/{{ git_user }}/{{ git_repo }}"
     branch: main
     comment: "Initial checkin of policies"
 
   tasks:
-  - name: Initial fetch
-    include_tasks:
-      file: tasks/fetch_policies.yml
-    vars:
-      dest_path: files/policies_actual
+    - name: Initial fetch
+      ansible.builtin.include_tasks:
+        file: tasks/fetch_policies.yml
+      vars:
+        dest_path: files/policies_actual
 
-  - name: Get policies
-    include_tasks:
-      file: tasks/get_policies.yml
+    - name: Get policies
+      ansible.builtin.include_tasks:
+        file: tasks/get_policies.yml
 
-  - name: Push to git
-    include_tasks:
-      file: tasks/push_policies.yml
+    - name: Push to git
+      ansible.builtin.include_tasks:
+        file: tasks/push_policies.yml

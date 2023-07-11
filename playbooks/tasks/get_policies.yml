@@ -1,12 +1,11 @@
-
 - name: Create policies_actual
   ansible.builtin.file:
     path: files/policies_actual
     state: directory
   changed_when: false
 
-- name: get all policies
-  uri:
+- name: Get all policies
+  ansible.builtin.uri:
     url: https://{{ acs_host }}/v1/policies
     headers:
       Authorization: "Bearer {{ acs_token }}"
@@ -17,9 +16,9 @@
   no_log: false
   ignore_errors: true
 
-- name: write policies
-  include_tasks:
+- name: Write policies
+  ansible.builtin.include_tasks:
     file: get_policy.yml
   with_items: "{{ policies.json.policies }}"
   loop_control:
-      loop_var: policy
+    loop_var: policy
