@@ -15,13 +15,9 @@
     chdir: "files/policies_actual"
 
 - name: Push policies to branch
-  lvrfrc87.git_acp:
-    user: "{{ git_user }}"
-    token: "{{ git_pat }}"
+  git_acp:
     path: "files/policies_actual"
     branch: "{{ branch }}"
     comment: "{{ comment }}"
-    remote: origin
     add: [ "." ]
-    mode: https
     url: "{{ git_url }}"

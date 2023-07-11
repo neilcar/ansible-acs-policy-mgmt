@@ -10,6 +10,6 @@
 
 - name: Get policies from git
   ansible.builtin.git:
-    repo: "{{ url_parse.scheme }}://{{ git_user | urlencode }}:{{ git_pat | urlencode }}@{{ url_parse.netloc }}{{ url_parse.path }}"
+    repo: "{{ git_url }}"
     dest: "{{ dest_path }}"
   changed_when: false
